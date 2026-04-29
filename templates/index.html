@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FelineGenetics — Upload Your Cat's DNA File</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar">
+    <span class="nav-brand">🐱 FelineGenetics</span>
+    <div class="nav-links">
+      <a href="{{ url_for('index') }}" class="active">Upload</a>
+      <a href="{{ url_for('about') }}">About</a>
+    </div>
+  </nav>
+
+  <main class="container">
+    <!-- Flash messages (errors, warnings) -->
+    {% with messages = get_flashed_messages(with_categories=True) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <!-- Hero section -->
+    <section class="hero">
+      <h1>Cat Genetic Health Checker</h1>
+      <p class="hero-sub">
+        Upload your cat's DNA file and get a plain-English health risk report
+        in seconds — no science background needed.
+      </p>
+    </section>
+
+    <!-- Upload form -->
+    <section class="card upload-card">
+      <h2>Upload Your Cat's Information</h2>
+      <form action="{{ url_for('analyze') }}" method="POST" enctype="multipart/form-data">
+
+        <!-- Cat basics -->
+        <div class="form-section">
+          <h3>🐾 About Your Cat</h3>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="cat_name">Cat's Name</label>
+              <input type="text" id="cat_name" name="cat_name"
+                     placeholder="e.g. Mochi" maxlength="50" />
+            </div>
+            <div class="form-group">
+              <label for="cat_gender">Gender</label>
+              <select id="cat_gender" name="cat_gender">
+                <option value="Unknown">Not sure</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Male (neutered)">Male (neutered)</option>
+                <option value="Female (spayed)">Female (spayed)</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="cat_diet">Current Diet</label>
+            <input type="text" id="cat_diet" name="cat_diet"
+                   placeholder="e.g. dry kibble, raw, wet food" maxlength="100" />
+          </div>
+        </div>
+
+        <!-- File upload -->
+        <div class="form-section">
+          <h3>🧬 DNA File</h3>
+          <p class="hint">
+            Upload the <strong>.vcf</strong> file from your cat's genetic test.
+            This is a standard format provided by most pet DNA labs
+            (Wisdom Panel, Basepaws, etc.).
+          </p>
+          <div class="file-drop-zone" id="dropZone">
+            <input type="file" id="vcf_file" name="vcf_file"
+                   accept=".vcf" required class="file-input" />
+            <label for="vcf_file" class="file-label">
+              <span class="file-icon">📂</span>
+              <span id="file-text">Click to choose a .vcf file, or drag it here</span>
+            </label>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-large">
+          Analyse My Cat's DNA →
+        </button>
+      </form>
+    </section>
+
+    <!-- What to expect -->
+    <section class="info-grid">
+      <div class="info-card">
+        <span class="info-icon">🔒</span>
+        <h4>Stays on Your Computer</h4>
+        <p>Your DNA file is processed locally and deleted immediately after analysis. Nothing is sent to the cloud.</p>
+      </div>
+      <div class="info-card">
+        <span class="info-icon">📋</span>
+        <h4>Plain-Language Report</h4>
+        <p>Results are grouped by risk level — High, Medium, Low — with explanations written for cat owners, not geneticists.</p>
+      </div>
+      <div class="info-card">
+        <span class="info-icon">🐱</span>
+        <h4>Feline-Specific Database</h4>
+        <p>Our database covers known feline genetic variants from OMIA (Online Mendelian Inheritance in Animals).</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>Bio595 Project · Xiaoyue &amp; Dekun · For educational use only.
+       Always consult a veterinarian for medical decisions.</p>
+  </footer>
+
+  <script>
+    // Show the chosen filename in the drop zone label
+    document.getElementById("vcf_file").addEventListener("change", function () {
+      const label = document.getElementById("file-text");
+      label.textContent = this.files.length
+        ? "Selected: " + this.files[0].name
+        : "Click to choose a .vcf file, or drag it here";
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About — FelineGenetics</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+<body>
+  <nav class="navbar">
+    <span class="nav-brand">🐱 FelineGenetics</span>
+    <div class="nav-links">
+      <a href="{{ url_for('index') }}">Upload</a>
+      <a href="{{ url_for('about') }}" class="active">About</a>
+    </div>
+  </nav>
+  <main class="container">
+    <section class="card">
+      <h1>About This Tool</h1>
+      <p>
+        <strong>FelineGenetics</strong> is a Bio595 course project by Xiaoyue and Dekun.
+        It helps cat owners, breeders, and vets understand a cat's genetic health risks
+        from a standard VCF (Variant Call Format) file produced by most pet DNA labs.
+      </p>
+      <h2>How the Genetics Module Works</h2>
+      <ol>
+        <li>You upload a <code>.vcf</code> file — this is the raw DNA output from sequencing labs.</li>
+        <li>Our parser reads every variant line by line.</li>
+        <li>Each variant is matched against our local SQLite database of known feline health variants, sourced from <a href="https://omia.org" target="_blank">OMIA</a> and published research.</li>
+        <li>The genotype (one copy vs two copies) is combined with the inheritance pattern to decide if your cat is a <em>carrier</em> or is <em>affected</em>.</li>
+        <li>Results are grouped by severity (High / Medium / Low) and written in plain English.</li>
+      </ol>
+      <h2>Data Sources</h2>
+      <ul>
+        <li><a href="https://omia.org" target="_blank">OMIA — Online Mendelian Inheritance in Animals</a>: the primary catalog of known genetic variants in domestic animals.</li>
+        <li>Peer-reviewed feline genetics literature (severity levels and breed risks added by hand).</li>
+      </ul>
+      <h2>Limitations</h2>
+      <ul>
+        <li>Our database covers only well-studied, published variants. Many VCF lines will not match — this is normal and does not mean the cat is guaranteed healthy.</li>
+        <li>This tool is for educational awareness only. It is <strong>not a substitute for veterinary diagnosis</strong>.</li>
+        <li>VCF files from different labs use slightly different formats. If your file is not parsed correctly, please contact us.</li>
+      </ul>
+      <a href="{{ url_for('index') }}" class="btn btn-primary">← Back to Upload</a>
+    </section>
+  </main>
+  <footer class="footer">
+    <p>Bio595 Project · Xiaoyue &amp; Dekun · For educational use only.</p>
+  </footer>
+</body>
+</html>

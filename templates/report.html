@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Health Report – {{ report.cat_name }}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+<body>
+
+  <nav class="navbar">
+    <span class="nav-brand">🐱 FelineGenetics</span>
+    <div class="nav-links">
+      <a href="{{ url_for('index') }}">Upload</a>
+      <a href="{{ url_for('about') }}">About</a>
+    </div>
+  </nav>
+
+  <main class="container">
+
+    <h1 class="report-title">Genetic Health Report</h1>
+
+    <p class="report-meta">
+      🐾 <strong style="color:#7B5EA7;">{{ report.cat_name }}</strong>
+      &nbsp;·&nbsp;
+      {{ report.total_variants_checked }} genetic variants checked
+      &nbsp;·&nbsp;
+      {{ (report.high | length) + (report.medium | length) + (report.low | length) }} known health variants found
+      &nbsp;·&nbsp;
+      {{ report.unmatched_count }} variants not in database (normal)
+    </p>
+
+    <a href="{{ url_for('index') }}" class="btn-outline">&larr; Analyse Another Cat</a>
+
+    <div class="alert alert-info" style="margin-top:1.2rem;">
+      <strong>Important:</strong> This report is for educational awareness only.
+      It is not a medical diagnosis. Please share these results with your
+      veterinarian before making any health decisions.
+    </div>
+
+    <!-- ── No findings ──────────────────────────────────────────────── -->
+    {% if not report.has_findings %}
+    <div class="card" style="text-align:center; padding:3rem 1rem; margin-top:1.5rem;">
+      <div style="font-size:3rem;">✅</div>
+      <h2 style="margin-top:0.8rem;">No Known Risk Variants Found</h2>
+      <p style="color:#64748B; max-width:500px; margin:0 auto;">
+        We did not detect any of the {{ report.total_variants_checked }} variants
+        we checked in our database of known feline health conditions.
+        This is a positive result — but remember, our database covers only
+        well-studied variants. Regular vet check-ups are still important.
+      </p>
+    </div>
+
+    <!-- ── Findings ─────────────────────────────────────────────────── -->
+    {% else %}
+
+      <!-- HIGH -->
+      {% if report.high %}
+      <section class="findings-section">
+        <h2 class="section-title high">⚠ High Risk Findings</h2>
+        {% for f in report.high %}
+        <div class="finding-card finding-high">
+          <div class="finding-header">
+            <div>
+              <span class="finding-name">{{ f.condition_name }}</span>
+              <span class="finding-gene">gene: {{ f.gene }}</span>
+            </div>
+            <span class="badge badge-high">{{ f.status }}</span>
+          </div>
+          {% if f.plain_description %}
+          <p class="finding-desc">{{ f.plain_description }}</p>
+          {% endif %}
+          {% if f.message %}
+          <p class="finding-msg">{{ f.message }}</p>
+          {% endif %}
+          {% if f.at_risk_breeds %}
+          <p class="finding-breeds">🐱 At-risk breeds: {{ f.at_risk_breeds | join(", ") }}</p>
+          {% endif %}
+          {% if f.inheritance and f.inheritance != "Unknown" %}
+          <p class="finding-inheritance">Inheritance: {{ f.inheritance }}</p>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </section>
+      {% endif %}
+
+      <!-- MEDIUM -->
+      {% if report.medium %}
+      <section class="findings-section">
+        <h2 class="section-title medium">⚠ Medium Risk Findings</h2>
+        {% for f in report.medium %}
+        <div class="finding-card finding-medium">
+          <div class="finding-header">
+            <div>
+              <span class="finding-name">{{ f.condition_name }}</span>
+              <span class="finding-gene">gene: {{ f.gene }}</span>
+            </div>
+            <span class="badge badge-medium">{{ f.status }}</span>
+          </div>
+          {% if f.plain_description %}
+          <p class="finding-desc">{{ f.plain_description }}</p>
+          {% endif %}
+          {% if f.message %}
+          <p class="finding-msg">{{ f.message }}</p>
+          {% endif %}
+          {% if f.at_risk_breeds %}
+          <p class="finding-breeds">🐱 At-risk breeds: {{ f.at_risk_breeds | join(", ") }}</p>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </section>
+      {% endif %}
+
+      <!-- LOW -->
+      {% if report.low %}
+      <section class="findings-section">
+        <h2 class="section-title low">ℹ Low Risk Findings</h2>
+        {% for f in report.low %}
+        <div class="finding-card finding-low">
+          <div class="finding-header">
+            <div>
+              <span class="finding-name">{{ f.condition_name }}</span>
+              <span class="finding-gene">gene: {{ f.gene }}</span>
+            </div>
+            <span class="badge badge-low">{{ f.status }}</span>
+          </div>
+          {% if f.plain_description %}
+          <p class="finding-desc">{{ f.plain_description }}</p>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </section>
+      {% endif %}
+
+    {% endif %}
+
+    <!-- ── What to do next ─────────────────────────────────────────── -->
+    <div class="card" style="margin-top:2rem; padding:1.5rem;">
+      <h3>📌 What to Do Next</h3>
+      <ul>
+        <li><strong>Keep the DNA report on file.</strong> Future vets caring for
+            your cat will benefit from knowing its genetic background.</li>
+        {% if report.has_findings %}
+        <li><strong>Share with your vet.</strong> Bring this report to your next
+            veterinary appointment for a professional evaluation.</li>
+        <li><strong>Don't panic.</strong> Being a carrier does not mean your cat
+            will develop the condition — it may never show any symptoms.</li>
+        {% endif %}
+        <li><strong>Remember our limits.</strong> This tool only covers
+            {{ report.total_variants_checked }} well-studied variants.
+            A clean report does not guarantee perfect health.</li>
+      </ul>
+    </div>
+
+  </main>
+
+</body>
+</html>
